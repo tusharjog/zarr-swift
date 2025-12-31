@@ -1,0 +1,60 @@
+//
+//  FileSystemStore.swift
+//  ZarrSwift
+//
+//  Created by Tushar Jog on 12/30/25.
+//
+import Foundation
+
+// MARK: - Filesystem Store
+
+public class FilesystemStore: ZarrStore {
+    private let basePath: URL
+    private let fileManager = FileManager.default
+    
+    public init(path: URL) throws {
+        self.basePath = path
+        try fileManager.createDirectory(at: path, withIntermediateDirectories: true)
+    }
+    
+    private func fullPath(for key: String) -> URL {
+        return basePath.appendingPathComponent(key)
+    }
+    
+    public func get(key: String) throws -> Data? {
+        let path = fullPath(for: key)
+        guard fileManager.fileExists(atPath: path.path) else { return nil }
+        return try Data(contentsOf: path)
+    }
+    
+    public func set(key: String, value: Data) throws {
+        let path = fullPath(for: key)
+        let directory = path.deletingLastPathComponent()
+        try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
+        try value.write(to: path)
+    }
+    
+    public func delete(key: String) throws {
+        let path = fullPath(for: key)
+        try fileManager.removeItem(at: path)
+    }
+    
+    public func exists(key: String) -> Bool {
+        return fileManager.fileExists(atPath: fullPath(for: key).path)
+    }
+    
+    public func list(prefix: String?) throws -> [String] {
+        let searchPath = prefix.map { fullPath(for: $0) } ?? basePath
+        guard fileManager.fileExists(atPath: searchPath.path) else { return [] }
+        
+        let contents = try fileManager.contentsOfDirectory(
+            at: searchPath,
+            includingPropertiesForKeys: nil,
+            options: [.skipsHiddenFiles]
+        )
+        
+        return contents.map { url in
+            String(url.path.dropFirst(basePath.path.count + 1))
+        }
+    }
+}
