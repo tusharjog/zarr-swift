@@ -25,17 +25,18 @@ struct ZarrObjectTests {
         try store.set(key: "a", value: Data([1, 2, 3, 4, 5, 6]))
         
         let metadata = ZarrGroupMetaData(attributes: [:])
-        let root = try ZarrGroup(path: "foo", store: store, metadata: metadata)
+        let root = try ZarrGroup.create(store: store, path: "foo", metadata: metadata)
         let arrayMetadata = ZarrArrayMetaData(
-            shape: [2],
-            dataType: ZarrDataType.float64,
-            chunkGrid: ZarrChunkGrid.regular([2]),
+            shape: [100, 10],
+            dataType: ZarrDataType.float32,
+            chunkGrid: ZarrChunkGrid.regular([10, 10]),
             chunkKeyEncoding: ZarrChunkKeyEncoding.default(separator: "/"),
             fillValue: FillValue.float(0),
             codecs: [],
-            attributes: [:]
+            attributes: [:],
+            dimensionNames: []
         )
-        let bar = try ZarrArray(path: "bar", store: store, metadata: arrayMetadata)
+        let bar = try ZarrArray.create(store: store, path: "bar", metadata: arrayMetadata)
         
         print(store)
         print(root)

@@ -98,6 +98,14 @@ public enum ZarrChunkKeyEncoding : Codable {
         switch self {
         case .default(let sep):
             try container.encode("default", forKey: .name)
+            try container.encode(Configuration(separator: sep), forKey: .configuration)
+        }
+    }
+    
+    func encodeKey(_ indices: [Int]) -> String {
+        switch self {
+        case .default(let sep):
+            return "c" + sep + indices.map(String.init).joined(separator: sep)
         }
     }
 }

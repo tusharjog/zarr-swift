@@ -16,7 +16,7 @@ public struct ZarrGroupMetaData: Codable {
     public let zarrFormat: Int
     public let nodeType: ZarrNodeType
     // Attributes are optional
-    public let attributes: [String: ZarrDataType]?
+    public let attributes: [String: JSONValue]?
     
     enum CodingKeys : String, CodingKey {
         case zarrFormat = "zarr_format"
@@ -24,7 +24,7 @@ public struct ZarrGroupMetaData: Codable {
         case attributes
     }
     
-    public init(attributes: [String : ZarrDataType]?) {
+    public init(attributes: [String : JSONValue]?) {
         self.zarrFormat = 3
         self.nodeType = ZarrNodeType.group
         self.attributes = attributes
@@ -79,7 +79,8 @@ public struct ZarrArrayMetaData : Codable {
     public let codecs : [ZarrCodecConfiguration]
     
     // Attributes are optional
-    public let attributes: [String: ZarrDataType]?
+    public let attributes: [String: JSONValue]?
+    public let dimensionNames : [String]?
     
     enum CodingKeys : String, CodingKey {
         case zarrFormat = "zarr_format"
@@ -91,9 +92,10 @@ public struct ZarrArrayMetaData : Codable {
         case fillValue = "fill_value"
         case codecs
         case attributes
+        case dimensionNames = "dimension_names"
     }
     
-    public init(shape: [Int], dataType: ZarrDataType, chunkGrid: ZarrChunkGrid, chunkKeyEncoding: ZarrChunkKeyEncoding, fillValue: FillValue, codecs: [ZarrCodecConfiguration], attributes: [String : ZarrDataType]?) {
+    public init(shape: [Int], dataType: ZarrDataType, chunkGrid: ZarrChunkGrid, chunkKeyEncoding: ZarrChunkKeyEncoding, fillValue: FillValue, codecs: [ZarrCodecConfiguration], attributes: [String : JSONValue]?, dimensionNames: [String]?) {
         self.zarrFormat = 3
         self.nodeType = .array
 
@@ -104,5 +106,6 @@ public struct ZarrArrayMetaData : Codable {
         self.fillValue = fillValue
         self.codecs = codecs
         self.attributes = attributes
+        self.dimensionNames = dimensionNames
     }
 }
