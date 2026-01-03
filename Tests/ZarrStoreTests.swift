@@ -8,7 +8,7 @@
 import Testing
 import Foundation
 import QuartzCore
-@testable import ZarrSwift
+@testable import SwiftZarr
 
 struct ZarrStoreTests {
     @Test func lruEviction() async throws {

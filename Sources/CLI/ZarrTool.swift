@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import ZarrSwift
+import SwiftZarr
 
 @main
 struct ZarrTool {
